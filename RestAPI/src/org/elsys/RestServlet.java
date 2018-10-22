@@ -75,7 +75,22 @@ public class RestServlet extends HttpServlet {
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		String pathInfo = request.getPathInfo().substring(1);
+		if(!map.containsKey(pathInfo)){
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+		else{
+			BufferedReader reader = request.getReader();
+			String line = reader.readLine();
+			
+			try {
+				JSONObject jsonData = new JSONObject(line);
+				map.put(pathInfo, jsonData.get("value").toString());
+				response.setStatus(HttpServletResponse.SC_OK);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
